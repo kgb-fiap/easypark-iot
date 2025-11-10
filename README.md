@@ -1,50 +1,195 @@
-# Projeto IoT com ESP32 Simulado no Wokwi
+# 🚗 EasyPark — Estacionamento Inteligente
 
-![VSCode](https://img.shields.io/badge/Editor-VSCode-blue?logo=visualstudiocode)
-![PlatformIO](https://img.shields.io/badge/Build-PlatformIO-orange?logo=platformio)
-![Wokwi](https://img.shields.io/badge/Simulator-Wokwi-green?logo=cloud)
+---
 
-## Descrição  
-Este projeto demonstra como configurar um **ESP32** no **Visual Studio Code** utilizando a extensão **PlatformIO**, em conjunto com o **Wokwi Simulator**.  
-A simulação permite desenvolver e testar aplicações sem a necessidade de hardware físico.  
+## 👨‍💻 Integrantes
 
-## Adaptação  
-Este repositório é uma adaptação do seguinte tutorial: [link](https://docs.google.com/document/d/1y6IfbOT_rAimZx41tNBL9NlscoB1ObjgaPmy2g4UGO0/edit?usp=sharing)  
+- **Gabriel Cruz Ferreira** — RM559613  
+- **Kauã Ferreira dos Santos** — RM560992  
+- **Vinicius da Silva Bitú** — RM560227  
 
-## Funcionalidades  
-- **Configuração no VSCode**: Projeto estruturado com PlatformIO.  
-- **Integração com Wokwi**: Simulação online do ESP32.  
-- **Teste sem hardware físico**: Desenvolvimento totalmente em ambiente simulado.  
+---
 
-⚠️ **Importante**: Para usar o Wokwi integrado ao VSCode e ao PlatformIO, é necessário habilitar a **licença Wokwi Pro**.  
+## 1. 🎯 Tema e Problema
 
-## Pré-requisitos  
-- [Visual Studio Code](https://code.visualstudio.com/)  
-- [PlatformIO IDE](https://platformio.org/install/ide?install=vscode)  
-- Conta no [Wokwi](https://wokwi.com/) com licença habilitada  
+O **EasyPark** nasceu da necessidade de modernizar a gestão de estacionamentos, tornando o processo **mais inteligente, automatizado e eficiente**.  
 
-## Instalação  
+Atualmente, a maioria dos estacionamentos ainda opera com métodos manuais ou sistemas isolados, sem integração com tecnologias em tempo real.  
+Isso gera:
+- Falta de precisão na ocupação das vagas;  
+- Dificuldade de análise de dados;  
+- Baixa rentabilidade;  
+- Experiência negativa para o usuário final.  
 
-1. **Clone o repositório:**  
-   ```bash
-   https://github.com/prof-atritiack/2TDS-IOT
-   ```  
+---
 
-2. **Abra no VSCode:**  
-   Navegue até a pasta do projeto e abra no Visual Studio Code.  
+## 2. 💡 Solução Proposta
 
-3. **Dependências:**  
-   O PlatformIO instalará automaticamente as bibliotecas necessárias na primeira compilação.  
+O **EasyPark** é uma plataforma que integra **IoT (Internet of Things)** e **Oracle APEX** para controlar e visualizar o status de vagas de estacionamento em tempo real.  
 
-## Uso  
+Cada vaga é monitorada por um **sensor de movimento**, simulado em **Wokwi**, e as informações são enviadas automaticamente para o **Oracle APEX**, onde o painel exibe se a vaga está **livre** ou **ocupada**.  
 
-1. **Compilação:**  
-   No PlatformIO, clique em **Build** para compilar o código.  
+### Principais funcionalidades:
+- Monitoramento em tempo real das vagas;  
+- Relatórios analíticos sobre uso e ocupação;  
+- Seleção de estacionamentos disponíveis;  
+- Expansão escalável para múltiplos locais;  
+- Interface simples, segura e responsiva.  
 
-2. **Simulação:**  
-   - Inicie a simulação no Wokwi.  
-   - Acompanhe os logs pelo monitor serial do VSCode.  
+---
 
-3. **Dicas de simulação:**  
-   - O Wokwi simula em tempo real, mas a execução pode variar em desempenho.  
-   - Utilize o monitor serial para acompanhar o comportamento do ESP32.  
+## 3. 🛠️ Solução com Oracle APEX
+
+O **Oracle APEX** foi utilizado como o **painel administrativo central** do sistema.  
+Com ele, foi possível criar um **dashboard interativo** integrado ao banco de dados Oracle, conectado diretamente ao sistema IoT.  
+
+### Funções principais do APEX:
+- Exibição de status das vagas (livre/ocupada);  
+- Geração de relatórios e gráficos de ocupação;  
+- Atualização automática dos dados via APIs REST (ORDS);  
+- Armazenamento e manipulação dos dados no Oracle Database.  
+
+Atualmente, o painel exibe **duas vagas funcionais**, mas o sistema foi projetado para suportar **múltiplos sensores e estacionamentos**.
+
+---
+
+## 4. ⚙️ Arquitetura IoT e Fluxo de Dados
+
+A arquitetura do **EasyPark** foi projetada para integrar sensores físicos (ou simulados) a uma plataforma de análise em nuvem, usando o Oracle APEX como núcleo visual e gerencial.
+
+### 🔄 Fluxo de comunicação
+
+1. **ESP32 (Simulador Wokwi)**  
+   - Simula o sensor de movimento de cada vaga.  
+   - Envia dados binários indicando ocupação (`1`) ou disponibilidade (`0`).
+
+2. **Broker MQTT (HiveMQ)**  
+   - Intermedia a comunicação entre os sensores e o servidor.  
+   - Garante a entrega das mensagens IoT.
+
+3. **Node-RED (Middleware)**  
+   - Recebe os dados MQTT e os converte em JSON.  
+   - Envia os dados via **HTTP POST** para o endpoint do APEX.
+
+4. **Oracle APEX / ORDS (API REST)**  
+   - Recebe as leituras e executa comandos **PL/SQL** para armazenar os dados.
+
+5. **Oracle APEX (Dashboard)**  
+   - Lê os dados do banco e atualiza os **cards e gráficos em tempo real**.
+
+---
+
+## 5. 🧱 Estrutura de Banco de Dados (Oracle)
+
+### 🗂️ Tabela de Vagas
+```sql
+CREATE TABLE tb_vagas (
+    id_vaga NUMBER GENERATED BY DEFAULT AS IDENTITY,
+    nome_vaga VARCHAR2(50),
+    status_vaga VARCHAR2(10), -- 'LIVRE' ou 'OCUPADA'
+    data_leitura TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+````
+
+### 🛰️ Handler da API REST (ORDS)
+
+```sql
+INSERT INTO tb_vagas (nome_vaga, status_vaga)
+VALUES (:nome_vaga, :status_vaga);
+```
+
+### 💡 SQL dos Cards (Status das Vagas)
+
+```sql
+SELECT
+    nome_vaga AS card_title,
+    status_vaga AS card_value,
+    CASE
+        WHEN status_vaga = 'OCUPADA' THEN 'u-color-38' -- Vermelho
+        ELSE 'u-color-36' -- Verde
+    END AS card_color,
+    CASE
+        WHEN status_vaga = 'OCUPADA' THEN 'fa-car'
+        ELSE 'fa-square'
+    END AS card_icon
+FROM tb_vagas;
+```
+
+### 📊 SQL do Gráfico de Ocupação
+
+```sql
+SELECT
+    TO_CHAR(TRUNC(data_leitura, 'MI'), 'HH24:MI') AS minuto_formatado,
+    COUNT(CASE WHEN status_vaga = 'OCUPADA' THEN 1 END) AS total_ocupadas,
+    COUNT(CASE WHEN status_vaga = 'LIVRE' THEN 1 END) AS total_livres
+FROM tb_vagas
+GROUP BY TRUNC(data_leitura, 'MI')
+ORDER BY TRUNC(data_leitura, 'MI');
+```
+
+---
+
+## 6. 🔌 Tecnologias Utilizadas
+
+| Tecnologia                   | Finalidade                                     |
+| ---------------------------- | ---------------------------------------------- |
+| **IoT (Internet of Things)** | Monitoramento inteligente das vagas            |
+| **Wokwi**                    | Simulação dos sensores e do ESP32              |
+| **Node-RED**                 | Middleware de integração entre sensores e APEX |
+| **Oracle APEX / ORDS**       | Criação do dashboard e APIs REST               |
+| **Oracle Database**          | Armazenamento dos dados das vagas              |
+| **SQL / PL/SQL**             | Manipulação e integração dos dados             |
+| **MQTT Broker (HiveMQ)**     | Comunicação IoT entre dispositivos             |
+
+---
+
+## 7. 📊 Dashboard e Monitoramento
+
+O **Dashboard EasyPark** foi desenvolvido no **Oracle APEX**, permitindo o acompanhamento da ocupação em tempo real.
+
+### Recursos do painel:
+
+* Indicadores visuais (verde = livre / vermelho = ocupada);
+* Gráficos de histórico e tempo médio de ocupação;
+* Atualização automática via IoT;
+* Relatórios diários e exportação de dados.
+
+A solução combina **hardware simulado + software real** em uma arquitetura funcional e escalável.
+
+---
+
+## 8. 🚀 Evolução do Projeto
+
+O EasyPark evoluiu com base em **aprendizado incremental e integração tecnológica**.
+As principais atualizações foram:
+
+1. **Integração com sensores de movimento (via Wokwi)**
+
+   * Detecta automaticamente veículos nas vagas.
+
+2. **Seleção de locais no aplicativo**
+
+   * Usuário escolhe o estacionamento desejado e visualiza as vagas disponíveis.
+
+3. **Monitoramento com Oracle APEX**
+
+   * Exibe dados em tempo real e relatórios dinâmicos.
+   * Atualmente 2 vagas implementadas, com expansão prevista.
+
+4. **Planejamento de integração com sensores físicos e pagamentos digitais.**
+
+---
+
+## 9. 🧠 Resultados Obtidos
+
+* Sistema funcional com integração IoT simulada;
+* Atualização automática no painel APEX;
+* Automação do controle de vagas;
+* Visualização gráfica e relatórios analíticos;
+* Base sólida para expansão física (IoT real).
+
+---
+
+## 10. 🎥 Link do Video
+
+📺 [Video Youtube](https://youtu.be/rnA_F5wh34U)
