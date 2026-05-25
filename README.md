@@ -1,123 +1,179 @@
-# 🚗 EasyPark - IA
 
-## 👨‍💻 Integrantes
+#  EasyPark - Integração de Endpoints
+
+##  Integrantes
 - Vinicius da Silva Bitú — RM 560227  
 - Kauã Ferreira dos Santos — RM 560992  
 - Gabriel Cruz Ferreira — RM 559613  
 
 ---
 
-## 🎓 FIAP  
+##  FIAP  
 Curso: Análise e Desenvolvimento de Sistemas  
 
 ---
 
-## 🚀 Sprint 03 - Inteligência Artificial
+#  Sprint 04 - Integração de Endpoints
 
 ---
 
 ## 1. Introdução
 
-O projeto EasyPark tem como ideia ajudar no controle de vagas de estacionamento.
+O projeto EasyPark foi desenvolvido com o objetivo de facilitar o gerenciamento inteligente de vagas de estacionamento.
 
-Ele usa tecnologias como API, banco Oracle e agora também Inteligência Artificial.
+Nesta Sprint 04, o foco principal foi integrar toda a arquitetura do sistema, conectando:
 
-Nessa sprint, a gente adicionou uma IA pra deixar o sistema mais inteligente e fácil de usar.
+- API REST
+- Banco de Dados Oracle
+- Comunicação em nuvem
+
+Além disso, a aplicação foi disponibilizada publicamente utilizando ngrok, permitindo testes externos em tempo real.
 
 ---
 
 ## 2. Problema
 
-Hoje é difícil saber se tem vaga livre ou não em tempo real.
+Muitos sistemas de estacionamento funcionam de maneira separada, dificultando a comunicação entre sensores, banco de dados e aplicações administrativas.
 
-A ideia foi usar IA pra responder isso de forma rápida, tipo:
+Isso gera problemas como:
 
-- "Tem vaga livre?"
-- "Quantas vagas estão ocupadas?"
+- dificuldade para monitorar vagas
+- baixa integração entre sistemas
+- pouca automação
+- dificuldade de gerenciamento
 
----
-
-## 3. Modelo de IA
-
-A gente usou um modelo LLM (tipo ChatGPT) com a API da OpenAI.
-
-Motivo:
-- entende perguntas normais (tipo conversa)
-- fácil de usar
-- não precisa treinar muito
+A proposta da Sprint foi centralizar todos os serviços em uma única API integrada.
 
 ---
 
-## 4. Dados usados
+## 3. Tecnologias Utilizadas
 
-Os dados foram criados em CSV simulando sensores IoT.
+O sistema foi desenvolvido utilizando:
 
-Tem coisas tipo:
-- id da vaga  
-- horário  
-- dia da semana  
-- status (livre ou ocupado)  
-- tempo de uso  
-
-Isso simula sensores reais de estacionamento.
+- Python
+- Flask
+- Oracle Database
+- Pandas
+- Pyngrok
+- Threading
 
 ---
 
-## 5. Arquitetura
+## 4. Banco de Dados
 
-O sistema funciona assim:
+O projeto utiliza Oracle Database para armazenamento das informações do sistema.
 
+Foram realizadas integrações para:
+
+- autenticação de usuários
+- consulta de dados
+- listagem de usuários
+- dashboard gerencial
+
+A conexão foi feita utilizando a biblioteca `oracledb` em modo Thin.
+
+---
+
+## 5. Dados Utilizados
+
+Os dados utilizados foram simulados em CSV representando sensores IoT.
+
+Os arquivos possuem informações como:
+
+- id da vaga
+- horário
+- status da vaga
+- tempo de ocupação
+- data
+- dia da semana
+
+
+---
+
+## 6. Arquitetura
+
+O sistema funciona da seguinte forma:
+
+```text
 Usuário
 ↓
-Aplicação (EasyPark)
+API Flask (EasyPark)
 ↓
-IA (OpenAI)
+Dados CSV / Oracle
 ↓
-Dados (CSV ou banco)
-↓
-Resposta
+Resposta ao usuário
+````
 
 ---
 
-## 6. Como funciona
+## 7. Endpoints da API
 
-1. Usuário faz uma pergunta  
-2. Sistema recebe  
-3. Pega os dados  
-4. Envia pra IA  
-5. IA analisa  
-6. Responde  
+### GET /
+
+Verifica se o servidor está online.
+
+### GET /usuarios
+
+Lista usuários cadastrados no banco Oracle.
+
+### POST /login
+
+Realiza autenticação de usuários.
+
+### POST /dados
+
+Recebe e processa dados do sistema.
+
+### GET /dashboard
+
+Apresenta informações gerenciais do sistema.
+
+---
+
+## 8. Fluxo de Funcionamento
+
+1. O usuário envia uma requisição
+2. O Flask recebe a solicitação
+3. O sistema carrega os dados CSV
+4. Os dados são processados
+5. As informações são retornadas ao usuário
 
 Exemplo:
-"Quantas vagas estão livres?"
+
+```text
+Consulta de vagas disponíveis
+```
 
 ---
 
-## 7. Benefícios
+## 9. Benefícios
 
-- Resposta rápida  
-- Mais fácil pro usuário  
-- Sistema mais inteligente  
-- Pode melhorar no futuro  
-
----
-
-## 8. Conclusão
-
-A IA ajudou a deixar o EasyPark mais moderno.
-
-Agora o sistema consegue responder perguntas ao invés de só mostrar dados.
-
-No futuro dá pra melhorar com dados reais e sensores de verdade.
+* Melhor organização do sistema
+* Respostas rápidas
+* Integração com Oracle
+* Estrutura preparada para mobile/web
+* API centralizada
 
 ---
 
-## 🎥 Vídeo
+## 10. Conclusão
 
-([https://youtu.be/mS-_IpAb7U0](https://youtu.be/mS-_IpAb7U0))
+A Sprint 04 permitiu integrar banco Oracle e API REST em uma única aplicação funcional.
+
+O projeto EasyPark evoluiu para uma arquitetura mais organizada e preparada para futuras melhorias.
+
+Entre as possibilidades futuras estão:
+
+* integração com sensores reais
+* dashboards avançados
+* aplicativo mobile
+* monitoramento em tempo real
 
 ---
 
+## Vídeo
 
+[https://youtu.be/mS-_IpAb7U0]((https://youtu.be/T9HBWm6LfLQ))
 
+```
 
