@@ -173,7 +173,7 @@ Entre as possibilidades futuras estão:
 
 ## Vídeo
 
-[https://youtu.be/mS-_IpAb7U0]((https://youtu.be/T9HBWm6LfLQ))
+[https://youtu.be/mS-_IpAb7U0]([https://youtu.be/T9HBWm6LfLQ])
 
 ```
 
